@@ -1,0 +1,1 @@
+/home/chabi/Dropbox/Chabi/Programas/R/Scripts de R/Basic_Scripts/clipboard.R
