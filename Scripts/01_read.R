@@ -14,7 +14,10 @@ lapply(X = needed_script, FUN = function(x){
   library(x, character.only = TRUE)
 })
 
-dir_script <- list_script$dir_script
+
+dir_script <-  "/home/chabi/Dropbox/Investigaciones/Antonio/GDA001/20160827_First_steps/"
+
+# dir_script <- list_script$dir_script
 setwd(dir = dir_script)
 rm(list = ls());gc()
 # E Basics ----------------------------------------------------------------
@@ -114,6 +117,7 @@ data$tipo[data$tipo == "SEX"] <- "SEXO"
 data$tipo <- data$tipo %>%  factor
 data$target %>%  table
 data$target <- data$target %>%  factor
+data$correct <- data$correct %>%  as.character %>% as.numeric
 # E Checks ----------------------------------------------------------------
 
 

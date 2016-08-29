@@ -16,7 +16,7 @@ Sys.info()
 
 
 # S load data -------------------------------------------------------------
-dir_script <-  "/home/chabi/Dropbox/Investigaciones/Antonio/GDA001/20160417_Piloto"
+dir_script <-  "/home/chabi/Dropbox/Investigaciones/Antonio/GDA001/20160827_First_steps/"
 setwd(dir = dir_script)
 rm(list = ls());gc()
 
@@ -32,7 +32,7 @@ data[ ,Subject := factor( Subject)]
 
 ####### By Subject
 dataWideSubject <-
-  data[ ,
+  data[ data$correct == 1,
         list(
           RT = mean(response_time),
           SD = sd(response_time),
@@ -42,7 +42,7 @@ dataWideSubject <-
         by = Subject]
 
 dataWideSubject_RTError <-
-  data[ correct == 0,
+  data[ data$correct == 0,
         list(
           RT_Error = mean(response_time),
           SD_ERROR_SD = sd(response_time)
@@ -54,7 +54,7 @@ dataWideSubject
 
 ###### By type
 dataWideItem <-
-  data[ ,
+  data[ data$correct == 1,
         list(
           RT = mean(response_time),
           SD = sd(response_time),
@@ -65,7 +65,7 @@ dataWideItem <-
         by = target]
 
 dataWideItem_RTError <-
-  data[ correct == 0,
+  data[ data$correct == 0,
         list(
           RT_Error = mean(response_time, na.rm = TRUE),
           SD_ERROR_SD = sd(response_time)
@@ -78,7 +78,7 @@ dataWideItem
 
 ##### By Item Men 
 dataWideItem_Men <-
-  data[ sexo == "Hombre", #& correct == 1,
+  data[ data$sexo == "Hombre" & data$correct == 1,
         list(
           RT = mean(response_time),
           SD = sd(response_time),
@@ -89,7 +89,7 @@ dataWideItem_Men <-
         by = target]
 
 dataWideItem_Men_RTError <-
-  data[ sexo == "Hombre" & correct == 0,
+  data[ data$sexo == "Hombre" & data$correct == 0,
         list(
           RT_Error = mean(response_time, na.rm = TRUE),
           SD_ERROR_SD = sd(response_time)
@@ -101,7 +101,7 @@ dataWideItem_Men
 
 ###### By Item Women
 dataWideItem_Women <-
-  data[ sexo == "Mujer" , #& correct == 1,
+  data[ data$sexo == "Mujer" & data$correct == 1,
         list(
           RT = mean(response_time),
           SD = sd(response_time),
@@ -112,7 +112,7 @@ dataWideItem_Women <-
         by = target]
 
 dataWideItem_Women_RTError <-
-  data[ sexo == "Mujer" & correct == 0,
+  data[ data$sexo == "Mujer" & data$correct == 0,
         list(
           RT_Error = mean(response_time, na.rm = TRUE),
           SD_ERROR_SD = sd(response_time)
@@ -142,7 +142,7 @@ p
 dev.off()
 
 
-p <-ggplot(dat, aes(x= target2, y= Accuracy, colour= tipo)) + 
+p <-ggplot(dat, aes(x= target2, y= Accuracy, colour= tipo)) +
   geom_line() +
   geom_point()+
   theme_bw() +
