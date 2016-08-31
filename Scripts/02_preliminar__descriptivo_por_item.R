@@ -1,25 +1,32 @@
-# S libraries -------------------------------------------------------------
-install_list <-c("data.table", "dplyr", "ggplot2")
+# S Basics ----------------------------------------------------------------
+if(! require("rjson")){
+  install.packages("rjson")
+}
+library("rjson")
 
-lapply(install_list, function(x){
-  if(!x %in% installed.packages()){
+list_script <- fromJSON(readLines(con = "Data/00_Initial.json") ) 
+needed_script <- list_script$needed_script
+lapply(X = needed_script, FUN = function(x){
+  print(x)
+  if( !x %in% installed.packages() ){
     install.packages(x)
   }
   library(x, character.only = TRUE)
-  
 })
 
-sessionInfo()
-Sys.info()
-# E libraries -------------------------------------------------------------
 
+dir_script <- 
+  list_script$dir_script
 
-
-# S load data -------------------------------------------------------------
-dir_script <-  "/home/chabi/Dropbox/Investigaciones/Antonio/GDA001/20160827_First_steps/"
 setwd(dir = dir_script)
 rm(list = ls());gc()
 
+sessionInfo()
+Sys.info()
+# E Basics ----------------------------------------------------------------
+
+
+# S load data -------------------------------------------------------------
 load("RData/00_read_prepare_data.RData")
 data$target <- paste(data$target, data$block, sep = "-")
 # E load data -------------------------------------------------------------

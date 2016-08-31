@@ -1,3 +1,6 @@
+# Ojo he borrado los datos porque ocupaban mucho en Dropbox
+
+
 # S Basics ----------------------------------------------------------------
 if(! require("rjson")){
   install.packages("rjson")
@@ -15,9 +18,9 @@ lapply(X = needed_script, FUN = function(x){
 })
 
 
-dir_script <-  "/home/chabi/Dropbox/Investigaciones/Antonio/GDA001/20160827_First_steps/"
+dir_script <- 
+  list_script$dir_script
 
-# dir_script <- list_script$dir_script
 setwd(dir = dir_script)
 rm(list = ls());gc()
 # E Basics ----------------------------------------------------------------
@@ -122,7 +125,7 @@ data$correct <- data$correct %>%  as.character %>% as.numeric
 
 
 # S save ------------------------------------------------------------------
-save(data, file = "RData/00_read_prepare_data.RData")
+# save(data, file = "RData/00_read_prepare_data.RData")
 # E save ------------------------------------------------------------------
 
 Times
