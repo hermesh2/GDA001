@@ -33,17 +33,36 @@ load("RData/03_Prepare_EzAnova.RData")
 # S Anova -----------------------------------------------------------------
 490
 dataDT_ez_Anova <- dataDT_ez[  dataDT_ez$variable != "Help-FB_SEXO" &
-                                 dataDT_ez$variable != "Sex-FB_HELP" ,  ]
+                                dataDT_ez$variable != "Sex-FB_HELP" ,  ]
 ezANOVA(
   data = dataDT_ez_Anova
   , dv = list("value")
   , wid = .("Subject")
   , within = .("Block")
-  # , between = .("Sex")
+  , between = .("Sex")
 )
 # E Anova -----------------------------------------------------------------
 
-sexo <- "Hombre"
-t.test( dataDT_ez_Anova$value[dataDT_ez_Anova$Sex == sexo] ~ dataDT_ez_Anova$Block[dataDT_ez_Anova$Sex == sexo]  )
-t.test( dataDT_ez_Anova$value ~ dataDT_ez_Anova$Block )
-          
+# sexo <- "Hombre"
+# t.test( dataDT_ez_Anova$value[dataDT_ez_Anova$Sex == sexo] ~ dataDT_ez_Anova$Block[dataDT_ez_Anova$Sex == sexo]  )
+# t.test( dataDT_ez_Anova$value ~ dataDT_ez_Anova$Block )
+# 
+# dataDT_ez_Anova$value
+# lmod <- lmer(formula = value ~ Block * Sex+ (1| Subject) ,verbose = TRUE,  data = dataDT_ez_Anova)
+# # Error in pvals.fnc(lmod, nsim = 10^4) : 
+# #   MCMC sampling is no longer supported by lme4.
+# # For p-values, use the lmerTest package, which provides
+# # functions summary() and anova() which give p-values of
+# # various kinds.
+# lmod %>%  summary
+# lmod %>%  anova
+# 
+# 
+# by(  data = dataDT_ez_Anova$value, dataDT_ez_Anova$variable, mean)
+# 
+by(  data = dataDT_ez_Anova$value, dataDT_ez_Anova$Block, mean)
+# 
+by(  data = dataDT_ez_Anova$value, paste(dataDT_ez_Anova$Sex, dataDT_ez_Anova$Block), mean)
+by(  data = dataDT_ez$value, paste(dataDT_ez$Sex, dataDT_ez$Block, dataDT_ez$Type), mean)
+
+dataDT_ez

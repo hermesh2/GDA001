@@ -212,10 +212,23 @@ if( list_script$Out_IQR == TRUE){
 
 
 # S Prepare Matrix --------------------------------------------------------
+dataDTcorrect$tipo2 <- NA
+dataDTcorrect$tipo2[  dataDTcorrect$block2 == "Help-FB"  ] <-
+  ifelse(dataDTcorrect$tipo[  dataDTcorrect$block2 == "Help-FB"  ] == "SEXO", yes = "Interf", no = "No_Interf")
+  
+dataDTcorrect$tipo2[  dataDTcorrect$block2 == "Sex-FB"  ] <-
+  ifelse(dataDTcorrect$tipo[  dataDTcorrect$block2 == "Sex-FB"  ] == "HELP", yes = "Interf", no = "No_Interf")
 
-dataDT_ez <- dcast( formula = Subject ~  block2 + tipo ,data = dataDTcorrect , fun = function(x){
+dataDT_ez <- dcast( formula = Subject ~  block2 + tipo2 ,data = dataDTcorrect , fun = function(x){
   mean(x, na.rm = TRUE)
   } , value.var="response_time")
+
+if(TRUE){
+  
+}
+
+
+
 dataDT_ez <- melt(data = dataDT_ez, id.vars="Subject")
 dataDT_ez$Block <- dataDT_ez$variable %>%  as.character %>%  strsplit( "_") %>% 
   lapply(FUN = function(x){x[1]}) %>%  unlist
