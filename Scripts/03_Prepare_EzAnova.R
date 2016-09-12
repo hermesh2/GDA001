@@ -74,7 +74,7 @@ rm( number_trial_per_block);gc()
 # Select the data table without the first trial
 dataDT <- data[ data$trial_order != 1, c("Subject", "correct", "block", "sexo", "target", "tipo", "block2", "response_time")] %>% 
   data.table
-dataDT %>%  summary
+# dataDT %>%  summary
 
 ######################################
 #### OUT data checks
@@ -84,7 +84,12 @@ dataDT %>%  summary
 # (dataDT$response_time <= list_script$min_RT ) %>%  table %>%  prop.table # Miramos los que tienen menos 300 msec
 # (dataDT$response_time >= list_script$max_RT ) %>%  table %>%  prop.table # Miramos los que tienen mas 3000 msec
 
-dataDTcorrect <- dataDT[ dataDT$correct == 1, ] # Only the correct answer
+if(list_script$correct_only == TRUE){
+  dataDTcorrect <- dataDT[ dataDT$correct == 1, ] # Only the correct answer  
+}else{
+  dataDTcorrect <- dataDT
+}
+
 # (dataDTcorrect$response_time <= list_script$min_RT ) %>%  table %>%  prop.table # Miramos los que tienen menos 300 msec
 # (dataDTcorrect$response_time >= list_script$max_RT ) %>%  table %>%  prop.table # Miramos los que tienen mas 3000 msec
 
@@ -114,7 +119,7 @@ row.names(Ranges) <- rm()
 CheckSubjects <- dataDT[, list( Subject = Subject[1], sexo = sexo[1], mean_correct = mean(correct)),
                         by = paste(dataDT$Subject, dataDT$block) ]
 CheckSubjects$Subject[ CheckSubjects$mean_correct < list_script$Ratio_response_Block ] %>% table
-CheckSubjects[ CheckSubjects$mean_correct < list_script$Ratio_response_Block ,]
+# CheckSubjects[ CheckSubjects$mean_correct < list_script$Ratio_response_Block ,]
 SubjectsFailAccuracyRatio <- 
   CheckSubjects$Subject[ CheckSubjects$mean_correct < list_script$Ratio_response_Block] %>% unique
 
@@ -179,8 +184,13 @@ dataDTcorrect$rt_bigger_3000 <-
 #### Inside the range
 ######################################
 dataDTcorrect <- merge( x = dataDTcorrect , y = Ranges, by = "Subject", all.x = TRUE, all.y = FALSE)
-dataDTcorrect$Out_IQR <- ifelse(test = dataDTcorrect$response_time < dataDTcorrect$min | dataDTcorrect$response_time > dataDTcorrect$max,
+dataDTcorrect$Out_IQR <- 
+  ifelse(test = dataDTcorrect$response_time < dataDTcorrect$min | dataDTcorrect$response_time > dataDTcorrect$max,
        yes = 1, no =  0 )
+
+
+  
+
 # E filters ---------------------------------------------------------------
 
 
@@ -189,7 +199,6 @@ dataDTcorrect$Out_IQR <- ifelse(test = dataDTcorrect$response_time < dataDTcorre
 
 
 # S selection -------------------------------------------------------------
-
 if( list_script$Subject_2_Study == TRUE){
   nrow(dataDTcorrect) %>% print
   dataDTcorrect <- dataDTcorrect[ dataDTcorrect$Subject_2_Study == 1, ]
@@ -208,33 +217,77 @@ if( list_script$Out_IQR == TRUE){
   (dataDTcorrect$Out_IQR != 1 )%>%  table %>% print
   dataDTcorrect <- dataDTcorrect[ dataDTcorrect$Out_IQR != 1, ]
 }
+
+
+if( list_script$Error_plus_Subject_block_600 ==  TRUE){
+  dataDTonlyCorrectSubject <- 
+    dataDTcorrect[ correct == 1,  list( meanCorrectblock  =  mean(response_time, na.rm = TRUE )  + 600), 
+                   by = c("Subject" , "block")]
+  dataDTcorrect <- merge( x = dataDTcorrect , y = dataDTonlyCorrectSubject ,  by = c("Subject" , "block")  )
+  # dataDTcorrect[ correct == 0 , list(response_time -  meanCorrectblock)] %>%  summary
+  dataDTcorrect[ correct == 0 , response_time := response_time -  meanCorrectblock ]
+  
+}
+
+
+if( list_script$Error_plus_Subject_600 ==  TRUE){
+  dataDTonlyCorrectSubject <- 
+    dataDTcorrect[ correct == 1,  list( meanCorrectblock  =  mean(response_time, na.rm = TRUE )  + 600), 
+                   by = c("Subject" )]
+  dataDTcorrect <- merge( x = dataDTcorrect , y = dataDTonlyCorrectSubject ,  by = c("Subject" )  )
+  # dataDTcorrect[ correct == 0 , list(response_time -  meanCorrectblock)] %>%  summary
+  dataDTcorrect[ correct == 0 , response_time := response_time -  meanCorrectblock ]
+}
+
+if( list_script$Only_attribute ==  TRUE){
+  dataDTcorrect <- dataDTcorrect[tipo != "FACEBOOK" ,  ]
+}
+
+
 # E selection -------------------------------------------------------------
 
 
 # S Prepare Matrix --------------------------------------------------------
 dataDTcorrect$tipo2 <- NA
 dataDTcorrect$tipo2[  dataDTcorrect$block2 == "Help-FB"  ] <-
-  ifelse(dataDTcorrect$tipo[  dataDTcorrect$block2 == "Help-FB"  ] == "SEXO", yes = "Interf", no = "No_Interf")
+  ifelse(dataDTcorrect$tipo[  dataDTcorrect$block2 == "Help-FB"  ] == "SEXO", yes = "No_Interf", no = "Interf")
   
 dataDTcorrect$tipo2[  dataDTcorrect$block2 == "Sex-FB"  ] <-
-  ifelse(dataDTcorrect$tipo[  dataDTcorrect$block2 == "Sex-FB"  ] == "HELP", yes = "Interf", no = "No_Interf")
+  ifelse(dataDTcorrect$tipo[  dataDTcorrect$block2 == "Sex-FB"  ] == "HELP", yes = "No_Interf", no = "Interf")
 
-dataDT_ez <- dcast( formula = Subject ~  block2 + tipo2 ,data = dataDTcorrect , fun = function(x){
+################
+# Compute values
+################
+dataDT_ez <- dcast( formula = Subject ~  block2 + tipo ,data = dataDTcorrect , fun = function(x){
   mean(x, na.rm = TRUE)
   } , value.var="response_time")
 
-if(TRUE){
-  
-}
+dataDT_ez_merge_log <- dcast( formula = Subject ~  block2 + tipo ,data = dataDTcorrect , fun = function(x){
+  mean( log (x) , na.rm = TRUE)
+} , value.var="response_time")
+setnames(x = dataDT_ez_merge_log , old = dataDT_ez_merge_log %>%  names, new = dataDT_ez_merge_log %>%
+           names %>%  paste(. , "log", sep = "_" ) )
 
 
+dataDT_ez_merge_z <- dcast( formula = Subject ~  block2 + tipo ,data = dataDTcorrect , fun = function(x){
+  mean( scale (x) , na.rm = TRUE)
+} , value.var="response_time")
+setnames(x = dataDT_ez_merge_z , old = dataDT_ez_merge_z %>%  names, new = dataDT_ez_merge_z %>%
+           names %>%  paste(. , "z", sep = "_" ) )
+################
+# Merge all
+################
+dataDT_ez <- merge(x = dataDT_ez, y = dataDT_ez_merge_z, by.x = "Subject", by.y = "Subject_z")
+dataDT_ez <- merge(x = dataDT_ez, y = dataDT_ez_merge_log, by.x = "Subject", by.y = "Subject_log")
 
 dataDT_ez <- melt(data = dataDT_ez, id.vars="Subject")
 dataDT_ez$Block <- dataDT_ez$variable %>%  as.character %>%  strsplit( "_") %>% 
   lapply(FUN = function(x){x[1]}) %>%  unlist
 dataDT_ez$Type <- dataDT_ez$variable %>%  as.character %>%  strsplit( "_") %>%
   lapply(FUN = function(x){x[2]}) %>%  unlist
-
+dataDT_ez$measure <- dataDT_ez$variable %>%  as.character %>%  strsplit( "_") %>%
+  lapply(FUN = function(x){x[3]}) %>%  unlist
+dataDT_ez$measure <- ifelse(test = is.na(dataDT_ez$measure), yes = "RT", no =  dataDT_ez$measure )
 
 dataSubjectSexo <- 
   dataDT[ , list(Sex = sexo[1]), by =Subject ]
@@ -271,3 +324,4 @@ save(dataDT_ez, file = "RData/03_Prepare_EzAnova.RData")
 CheckSubjects
 SubjectsFailAccuracyRatio
 Subject_2_Study
+write.table(dataDT_ez, file = "Results/Con_tipo.csv")

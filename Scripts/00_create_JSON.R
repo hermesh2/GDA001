@@ -10,13 +10,20 @@ list <-  list(
   min_RT = 300,
   max_RT = 3000,
   IQR_prod = 1.5,
-  Ratio_response_Block = 0.7,
+  correct_only = FALSE, # Si quremeos solo las repuestas correctas
+  Ratio_response_Block = 0.8,
   n_per_sex_men = 50,
   n_per_sex_women = 50,
-  Subject_2_Study = TRUE,
+  Subject_2_Study = FALSE, # Seleccionamos solo los que cumplen los criterios
   Out_rt_300_3000 = TRUE,
   Out_IQR = FALSE,
-  Subject_out = c(102) # Falla
+  Error_plus_Subject_block_600 = TRUE,
+  Error_plus_Subject_600 = FALSE,
+  Only_attribute = FALSE, # Nos quedamos solo con los atributos
+  Subject_out = c(102) # Falla de hacer
 )
 
 writeLines(text = toJSON(list), con = "Data/00_Initial.json")
+
+source("Scripts/03_Prepare_EzAnova.R")
+source("Scripts/04_ezANOVA.R")
