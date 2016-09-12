@@ -212,6 +212,14 @@ if( list_script$Out_rt_300_3000 == TRUE){
                                     dataDTcorrect$rt_bigger_3000 != 1, ]
 }
 
+if( list_script$Change_rt_300_3000 == TRUE){ 
+  (dataDTcorrect$rt_minor_300 != 1 &
+     dataDTcorrect$rt_bigger_3000 != 1) %>%  table %>% print
+  dataDTcorrect$response_time[ dataDTcorrect$rt_minor_300 != 1 ] <- list_script$min_RT
+  dataDTcorrect$response_time[ dataDTcorrect$rt_bigger_3000 != 1 ] <- list_script$max_RT
+                                    
+}
+
 
 if( list_script$Out_IQR == TRUE){ 
   (dataDTcorrect$Out_IQR != 1 )%>%  table %>% print
@@ -219,14 +227,13 @@ if( list_script$Out_IQR == TRUE){
 }
 
 
-if( list_script$Error_plus_Subject_block_600 ==  TRUE){
+if( list_script$Error_plus_Subject_block_600 ==  TRUE){ # Si esto lo hacemosdataDTonlyCorrectSubject
   dataDTonlyCorrectSubject <- 
     dataDTcorrect[ correct == 1,  list( meanCorrectblock  =  mean(response_time, na.rm = TRUE )  + 600), 
                    by = c("Subject" , "block")]
   dataDTcorrect <- merge( x = dataDTcorrect , y = dataDTonlyCorrectSubject ,  by = c("Subject" , "block")  )
   # dataDTcorrect[ correct == 0 , list(response_time -  meanCorrectblock)] %>%  summary
-  dataDTcorrect[ correct == 0 , response_time := response_time -  meanCorrectblock ]
-  
+  dataDTcorrect[ correct == 0 , response_time := meanCorrectblock ] # response_time -  meanCorrectblock
 }
 
 
@@ -236,8 +243,9 @@ if( list_script$Error_plus_Subject_600 ==  TRUE){
                    by = c("Subject" )]
   dataDTcorrect <- merge( x = dataDTcorrect , y = dataDTonlyCorrectSubject ,  by = c("Subject" )  )
   # dataDTcorrect[ correct == 0 , list(response_time -  meanCorrectblock)] %>%  summary
-  dataDTcorrect[ correct == 0 , response_time := response_time -  meanCorrectblock ]
+  dataDTcorrect[ correct == 0 , response_time := meanCorrectblock ]# response_time -  meanCorrectblock
 }
+
 
 if( list_script$Only_attribute ==  TRUE){
   dataDTcorrect <- dataDTcorrect[tipo != "FACEBOOK" ,  ]

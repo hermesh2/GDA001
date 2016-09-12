@@ -34,7 +34,7 @@ load("RData/03_Prepare_EzAnova.RData")
 
 dataDT_ez$variable <- dataDT_ez$variable %>%  as.character %>%  gsub("_z", "", x = .) %>%  gsub("_log", "", x = .) %>%  factor
 dataDT_ez_Anova <- dataDT_ez[  
-  dataDT_ez$measure == "RT" &
+  dataDT_ez$measure == list_script$final_var_anova &
     dataDT_ez$variable != "Help-FB_SEXO" &
     dataDT_ez$variable != "Sex-FB_HELP" ,  ]
 
@@ -75,12 +75,12 @@ by(  data = dataDT_ez_Anova$value, paste(dataDT_ez_Anova$Sex, dataDT_ez_Anova$Bl
 
 ( mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Sex-FB" ]   )  -
   mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Help-FB" ]   ) ) / 
-    sd( dataDT_ez_Anova$value   ) 
+    sd( dataDT_ez_Anova$value   ) %>% print
 
 ( mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Sex-FB" &  dataDT_ez_Anova$Sex == "Hombre"]   )  -
   mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Help-FB" &  dataDT_ez_Anova$Sex == "Hombre"]   ) ) / 
-  sd( dataDT_ez_Anova$value [dataDT_ez_Anova$Sex == "Hombre"]  ) 
+  sd( dataDT_ez_Anova$value [dataDT_ez_Anova$Sex == "Hombre"]  )  %>% print
 
 ( mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Sex-FB" &  dataDT_ez_Anova$Sex == "Mujer"]   )  -
   mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Help-FB" &  dataDT_ez_Anova$Sex == "Mujer"]   ) ) / 
-  sd( dataDT_ez_Anova$value [dataDT_ez_Anova$Sex == "Mujer"]  ) 
+  sd( dataDT_ez_Anova$value [dataDT_ez_Anova$Sex == "Mujer"]  )  %>% print
