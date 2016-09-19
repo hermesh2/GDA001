@@ -31,7 +31,6 @@ load("RData/03_Prepare_EzAnova.RData")
 
 
 # S Anova -----------------------------------------------------------------
-
 dataDT_ez$variable <- dataDT_ez$variable %>%  as.character %>%  gsub("_z", "", x = .) %>%  gsub("_log", "", x = .) %>%  factor
 dataDT_ez_Anova <- dataDT_ez[  
   dataDT_ez$measure == list_script$measure &
@@ -44,7 +43,18 @@ ezANOVA(
   , dv = list("value")
   , wid = .("Subject")
   , within = .("Block")
-  , between = .("Sex")
+  , between = .("Sex", "Couple")
+) %>% print
+
+
+dataDT_ez_D <- dataDT_ez[
+  dataDT_ez$measure == "D" ,  ]
+ezANOVA(
+  data = dataDT_ez_D
+  , dv = list("value")
+  , wid = .("Subject")
+  # , within = .("Block")
+  , between = .("Sex", "Couple")
 ) %>% print
 # E Anova -----------------------------------------------------------------
 
@@ -53,4 +63,6 @@ ezANOVA(
 dataDT_ez_D <- dataDT_ez[
   dataDT_ez$measure == "D" ,  ]
 
-by(data = dataDT_ez_D$value, INDICES =  dataDT_ez_D$Sex, FUN = mean  )
+by(data = dataDT_ez_D$value, INDICES =  paste0( dataDT_ez_D$Sex, dataDT_ez_D$Couple), FUN = mean  )
+by(data = dataDT_ez_Anova$value, INDICES =  paste0( dataDT_ez_Anova$Sex, dataDT_ez_Anova$Couple , dataDT_ez_Anova$Block), FUN = mean  )
+

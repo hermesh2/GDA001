@@ -79,7 +79,7 @@ for( i in 1: length( list_data)){
   x %>% 
     filter( block != "training") %>% 
     select( Subject,	avg_rt, correct, response , correct_response, block,
-            response_time, response_time_bienvenida, sexo, target, tipo, total_response_time, height, width, subject_parity ) -> data_Aux
+            response_time, response_time_bienvenida, sexo, target, tipo, total_response_time, height, width, pareja ) -> data_Aux
   print("==================================================================")
   data_Aux$avg_rt <- data_Aux$avg_rt %>% as.character %>%   as.numeric
   data_Aux$response_time <- data_Aux$response_time %>%  as.character %>% as.numeric

@@ -30,6 +30,12 @@ load("RData/00_read_prepare_data.RData")
 
 
 # S Prepare data ----------------------------------------------------------
+data$pareja[data$pareja == "no" ] <- "No tengo pareja "
+data$pareja <- data$pareja %>% as.character %>%  gsub("pareja ", "pareja", .) 
+data$pareja[ data$pareja == "No tengo pareja"] <- "NO"
+data$pareja[ data$pareja == "Tengo pareja"] <- "YES"
+data$pareja <- data$pareja %>%  factor
+
 data$block2 <- ifelse(test = data$block %in% c(1, 3), yes = "Sex-FB", no = "Help-FB") %>%  factor
 data$Subject <- data$Subject %>%  as.character %>%  gsub("(1)", "", ., fixed = TRUE) %>% 
   gsub("(2)", "", ., fixed = TRUE) %>%  factor # Clean the repeatd files. Looks better in this way.
@@ -76,7 +82,7 @@ rm( number_trial_per_block);gc()
 # dataError <- dcast(formula = correct ~ block2 + tipo, data = data,  )
 
 # Select the data table without the first trial
-dataDT <- data[ data$trial_order != 1, c("Subject", "correct", "block", "sexo", "target", "tipo", "block2", "response_time")] %>% 
+dataDT <- data[ data$trial_order != 1, c("Subject", "correct", "block", "sexo", "target", "tipo", "block2", "response_time", "pareja")] %>% 
   data.table
 # dataDT %>%  summary
 
@@ -120,38 +126,12 @@ row.names(Ranges) <- rm()
 ######################################
 #### Out people with less than 80% ratio
 ######################################
-CheckSubjects <- dataDT[, list( Subject = Subject[1], sexo = sexo[1], mean_correct = mean(correct)),
+CheckSubjects <- dataDT[, list( Subject = Subject[1], sexo = sexo[1], pareja = pareja[1], mean_correct = mean(correct)),
                         by = paste(dataDT$Subject, dataDT$block) ]
 CheckSubjects$Subject[ CheckSubjects$mean_correct < list_script$Ratio_response_Block ] %>% table
 # CheckSubjects[ CheckSubjects$mean_correct < list_script$Ratio_response_Block ,]
 SubjectsFailAccuracyRatio <- 
   CheckSubjects$Subject[ CheckSubjects$mean_correct < list_script$Ratio_response_Block] %>% unique
-
-# Table for computing the bad responders
-# Numero de hombres y de mujeres que no cumplen el 80% correctas en la tarea
-# SubjectsOutDT$sexo %>%  table 
-# Mujer Hombre 
-# 9      9 
-# SubjectsOutDT
-# Subject   sexo
-# 1:     102 Hombre
-# 2:     108 Hombre
-# 3:     110 Hombre
-# 4:     118 Hombre
-# 5:     120 Hombre
-# 6:     128 Hombre
-# 7:     141 Hombre
-# 8:      28  Mujer
-# 9:       2 Hombre
-# 10:      31  Mujer
-# 11:      39  Mujer
-# 12:      41  Mujer
-# 13:      55  Mujer
-# 14:      69  Mujer
-# 15:      76 Hombre
-# 16:      77  Mujer
-# 17:      83  Mujer
-# 18:      96  Mujer
 # E Prepare data ----------------------------------------------------------
 
 
@@ -161,17 +141,55 @@ SubjectsFailAccuracyRatio <-
 #### Selected Per Study
 ######################################
 set.seed(list_script$seet_seed)
-Subject_2_Study <- c( dataDTcorrect$Subject[ dataDTcorrect$sexo == "Mujer" &   # Selecciono mujeres
+if( list_script$only_sex == TRUE){
+  Subject_2_Study <- c( dataDTcorrect$Subject[ dataDTcorrect$sexo == "Mujer" &   # Selecciono mujeres
+                                                 !(dataDTcorrect$Subject %in% SubjectsFailAccuracyRatio)] %>%
+                          unique %>%  as.character %>% 
+                          sample( size = list_script$n_per_sex_women, replace = FALSE) ,
+                        dataDTcorrect$Subject[ dataDTcorrect$sexo == "Hombre" & # Selecciono hombres
+                                                 !(dataDTcorrect$Subject %in% SubjectsFailAccuracyRatio)] %>%
+                          unique %>% as.character  %>% 
+                          sample( size = list_script$n_per_sex_men, replace = FALSE)
+  )
+  dataDTcorrect$Subject_2_Study <- ifelse( test = dataDTcorrect$Subject %in% Subject_2_Study, 
+                                           yes = 1, no = 0)
+  
+}else{
+                      ######################################3
+                      # Muejers con pareja  
+  Subject_2_Study <- c( dataDTcorrect$Subject[ dataDTcorrect$sexo == "Mujer" &   # Selecciono mujeres
+                                                 dataDTcorrect$pareja == "YES" &
+                                                 !(dataDTcorrect$Subject %in% SubjectsFailAccuracyRatio)] %>%
+                          unique %>%  as.character %>% 
+                          sample( size = list_script$n_per_sex_women_pareja, replace = FALSE) ,
+                        ######################################3  
+                        # Mujeres sin pareja  
+                        dataDTcorrect$Subject[ dataDTcorrect$sexo == "Mujer" &   # Selecciono mujeres
+                                                 dataDTcorrect$pareja == "NO" &
                                                !(dataDTcorrect$Subject %in% SubjectsFailAccuracyRatio)] %>%
-                        unique %>%  as.character %>% 
-                        sample( size = list_script$n_per_sex_women, replace = FALSE) ,
-                      dataDTcorrect$Subject[ dataDTcorrect$sexo == "Hombre" & # Selecciono hombres
-                                               !(dataDTcorrect$Subject %in% SubjectsFailAccuracyRatio)] %>%
-                        unique %>% as.character  %>% 
-     sample( size = list_script$n_per_sex_men, replace = FALSE)
-)
-dataDTcorrect$Subject_2_Study <- ifelse( test = dataDTcorrect$Subject %in% Subject_2_Study, 
-                                         yes = 1, no = 0)
+                          unique %>%  as.character %>% 
+                          sample( size = list_script$n_per_sex_women_no_pareja, replace = FALSE) ,
+                        
+                        ######################################3
+                        # Hombres con pareja  
+                        dataDTcorrect$Subject[ dataDTcorrect$sexo == "Hombre" &   # Selecciono mujeres
+                                                 dataDTcorrect$pareja == "YES" &
+                                                 !(dataDTcorrect$Subject %in% SubjectsFailAccuracyRatio)] %>%
+                          unique %>%  as.character %>% 
+                          sample( size = list_script$n_per_sex_men_pareja, replace = FALSE) ,
+                        
+                        ######################################3  
+                        # Hombres sin pareja  
+                        dataDTcorrect$Subject[ dataDTcorrect$sexo == "Hombre" &   # Selecciono mujeres
+                                                 dataDTcorrect$pareja == "NO" &
+                                                 !(dataDTcorrect$Subject %in% SubjectsFailAccuracyRatio)] %>%
+                          unique %>%  as.character %>% 
+                          sample( size = list_script$n_per_sex_men_no_pareja, replace = FALSE) 
+                        )
+  dataDTcorrect$Subject_2_Study <- ifelse( test = dataDTcorrect$Subject %in% Subject_2_Study, 
+                                           yes = 1, no = 0)
+  
+}
 ######################################
 #### 300 msec
 ######################################
@@ -336,7 +354,7 @@ dataDT_ez$measure <-
 dataDT_ez$measure <- ifelse(test = is.na(dataDT_ez$measure), yes = "RT", no =  dataDT_ez$measure )
 
 dataSubjectSexo <-
-  dataDT[ , list(Sex = sexo[1]), by =Subject ]
+  dataDT[ , list(Sex = sexo[1], Couple = pareja[1]), by =Subject ]
 dataDT_ez <- merge(x = dataDT_ez, y = dataSubjectSexo, by = "Subject", all.x = TRUE, all.y = FALSE )
 dataDT_ez$Block <- dataDT_ez$Block %>%  factor
 
