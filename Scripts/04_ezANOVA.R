@@ -34,9 +34,10 @@ load("RData/03_Prepare_EzAnova.RData")
 
 dataDT_ez$variable <- dataDT_ez$variable %>%  as.character %>%  gsub("_z", "", x = .) %>%  gsub("_log", "", x = .) %>%  factor
 dataDT_ez_Anova <- dataDT_ez[  
-  dataDT_ez$measure == list_script$final_var_anova &
-    dataDT_ez$variable != "Help-FB_SEXO" &
-    dataDT_ez$variable != "Sex-FB_HELP" ,  ]
+  dataDT_ez$measure == list_script$measure &
+    dataDT_ez$variable != "Help-FB_SEXO" & # Esto se puede mantener aunque sea la D
+    dataDT_ez$variable != "Sex-FB_HELP" &
+    dataDT_ez$variable != "Sex-FB_HELP_NoInterf",  ]
 
 ezANOVA(
   data = dataDT_ez_Anova
@@ -47,40 +48,9 @@ ezANOVA(
 ) %>% print
 # E Anova -----------------------------------------------------------------
 
-# sexo <- "Hombre"
-# t.test( dataDT_ez_Anova$value[dataDT_ez_Anova$Sex == sexo] ~ dataDT_ez_Anova$Block[dataDT_ez_Anova$Sex == sexo]  )
-# t.test( dataDT_ez_Anova$value ~ dataDT_ez_Anova$Block )
-# 
-# dataDT_ez_Anova$value
-# lmod <- lmer(formula = value ~ Block * Sex+ (1| Subject) ,verbose = TRUE,  data = dataDT_ez_Anova)
-# # Error in pvals.fnc(lmod, nsim = 10^4) : 
-# #   MCMC sampling is no longer supported by lme4.
-# # For p-values, use the lmerTest package, which provides
-# # functions summary() and anova() which give p-values of
-# # various kinds.
-# lmod %>%  summary
-# lmod %>%  anova
-# 
-# 
-# by(  data = dataDT_ez_Anova$value, dataDT_ez_Anova$variable, mean)
-# 
-# by(  data = dataDT_ez_Anova$value, dataDT_ez_Anova$Block, mean)
-# # 
 # by(  data = dataDT_ez_Anova$value, paste(dataDT_ez_Anova$Sex, dataDT_ez_Anova$Block), mean)
-# by(  data = dataDT_ez$value, paste(dataDT_ez$Sex, dataDT_ez$Block, dataDT_ez$Type), mean)
 # 
-# dataDT_ez
-by(  data = dataDT_ez_Anova$value, paste(dataDT_ez_Anova$Sex, dataDT_ez_Anova$Block), mean)
+dataDT_ez_D <- dataDT_ez[
+  dataDT_ez$measure == "D" ,  ]
 
-
-( mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Sex-FB" ]   )  -
-  mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Help-FB" ]   ) ) / 
-    sd( dataDT_ez_Anova$value   ) %>% print
-
-( mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Sex-FB" &  dataDT_ez_Anova$Sex == "Hombre"]   )  -
-  mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Help-FB" &  dataDT_ez_Anova$Sex == "Hombre"]   ) ) / 
-  sd( dataDT_ez_Anova$value [dataDT_ez_Anova$Sex == "Hombre"]  )  %>% print
-
-( mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Sex-FB" &  dataDT_ez_Anova$Sex == "Mujer"]   )  -
-  mean( dataDT_ez_Anova$value[ dataDT_ez_Anova$Block == "Help-FB" &  dataDT_ez_Anova$Sex == "Mujer"]   ) ) / 
-  sd( dataDT_ez_Anova$value [dataDT_ez_Anova$Sex == "Mujer"]  )  %>% print
+by(data = dataDT_ez_D$value, INDICES =  dataDT_ez_D$Sex, FUN = mean  )
