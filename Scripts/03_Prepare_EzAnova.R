@@ -324,12 +324,18 @@ dataDT_ez_log_sd <- dcast( formula = Subject ~  tipo ,data = dataDTcorrect[ tipo
 
 
 if( list_script$interfernce_union == TRUE){ # Elijo como hago el analisis
-  dataDT_ez_merge_D <- data.table( 
+  dataDT_ez_merge_D <- data.table(
     Subject =  dataDT_ez$Subject,
     D_D_D =
-      ( dataDT_ez$`Help-FB_Interf`  - dataDT_ez$`Sex-FB_Interf`) / 
+      ( dataDT_ez$`Help-FB_Interf`  - dataDT_ez$`Sex-FB_Interf`) /
       dataDT_ez_sd$Interf
   )
+  # dataDT_ez_merge_D2 <- data.table( 
+  #   Subject =  dataDT_ez_merge_log$Subject,
+  #   D_D_D =
+  #     ( dataDT_ez_merge_log$`Help-FB_Interf`  - dataDT_ez_merge_log$`Sex-FB_Interf`) / 
+  #     dataDT_ez_log_sd$Interf
+  # )
 }else{
 #  Por hacer
 }

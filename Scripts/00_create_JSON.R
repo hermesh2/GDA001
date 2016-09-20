@@ -14,7 +14,7 @@ list <-  list(
   correct_only = FALSE,             # Si quremeos solo las repuestas correctas
   Ratio_response_Block = 0.8,
   
-  only_sex = FALSE,
+  only_sex = FALSE,               # Solo sexo o sexo + couple
   
   n_per_sex_men = 50,
   n_per_sex_women = 50,
