@@ -1,4 +1,4 @@
-t.test.Comparison.Function.Ch <- function( data, StringResponse, StringFactor){
+t.test.Comparison.Function.Ch <- function( data, StringResponse, StringFactor, ...){
   ############################
   # Factor
   ############################
@@ -19,7 +19,7 @@ t.test.Comparison.Function.Ch <- function( data, StringResponse, StringFactor){
     for(j in (i+1):( NumberOfFactors) ){
       LevelTwo <- levels(data[, StringFactor])[j]
       x <-t.test( x =data[data[, StringFactor] == LevelOne, StringResponse] ,
-                  y =data[data[, StringFactor] == LevelTwo, StringResponse] )  
+                  y =data[data[, StringFactor] == LevelTwo, StringResponse], ... )  
       
       T.Test <- rbind( T.Test, 
                        data.frame(Name = paste(LevelOne,LevelTwo, sep= "."),

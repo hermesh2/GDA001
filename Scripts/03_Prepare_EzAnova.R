@@ -251,7 +251,7 @@ if( list_script$Error_plus_Subject_block_600 ==  TRUE){ # Borg 2010
   dataDTcorrect <- merge( x = dataDTcorrect , y = dataDTonlyCorrectSubject ,  by = c("Subject" , "block")  )
   # dataDTcorrect[ correct == 0 , list(response_time -  meanCorrectblock)] %>%  summary
   dataDTcorrect[ correct == 0 , response_time :=  meanCorrectblock ]
-  
+  dataDTcorrect$correct %>%  table
 }
 
 
@@ -397,7 +397,7 @@ dataDT_ez$variable <- dataDT_ez$variable %>%  as.character %>% gsub("_z" , "", .
 
 
 
-save(dataDT_ez, file = "RData/03_Prepare_EzAnova.RData")
+save(dataDT_ez, dataDTcorrect, file = "RData/03_Prepare_EzAnova.RData")
 CheckSubjects
 SubjectsFailAccuracyRatio
 Subject_2_Study

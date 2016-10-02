@@ -72,57 +72,9 @@ dataDT_ez_D <- dataDT_ez[
 by(data = dataDT_ez_D$value, INDICES =  paste0( dataDT_ez_D$Sex, dataDT_ez_D$Couple), FUN = mean  )
 by(data = dataDT_ez_Anova$value, INDICES =  paste0( dataDT_ez_Anova$Sex, dataDT_ez_Anova$Couple , dataDT_ez_Anova$Block), FUN = mean  )
 # E Comparison ------------------------------------------------------------
+save(dataDT_ez, dataDTcorrect, dataDT_ez_D , dataDT_ez_Anova,  file = "RData/04_ezANOVA.RData")
 
 
-# S plots -----------------------------------------------------------------
-plotMeanCh(response = dataDT_ez_Anova$value,
-           factor2 = dataDT_ez_Anova$Block %>%  as.character %>% factor,  
-           factor1 = 
-             paste(dataDT_ez_Anova$Sex, dataDT_ez_Anova$Couple, sep = "-") %>%  as.character %>% factor,
-           error.bars = "se", pch = 15:16 , lty = 1, xlab = "Gender-Couple", ylab = paste(list_script$measure, "RT"),
-           main = "Reaction times (log(RT) msecs" )
-grid()
-
-dataDT_ez_Anova$value %>%  as.character %>% factor %>%  length()
-paste(dataDT_ez_Anova$Sex, dataDT_ez_Anova$Couple, sep = "-")%>%  as.character %>% factor %>%  length()
-
-plotMeanCh(response = dataDT_ez_D$value, 
-           factor1 =dataDT_ez_D$Sex, factor2 =  dataDT_ez_D$Couple,
-           error.bars = "se", pch = 15:16 , lty = 1, xlab = "Gender", ylab = "D-measuere",
-           main = "D-Measure" )
-grid()
-# E plots -----------------------------------------------------------------
-
-
-# S t.test ----------------------------------------------------------------
-t.test.Comparison.Function.Ch(data = dataDT_ez_Anova %>% data.frame, StringResponse = "value", StringFactor = "Sex")
-t.test.Comparison.Function.Ch(data = dataDT_ez_Anova %>% data.frame, StringResponse = "value", StringFactor = "Block")
-t.test.Comparison.Function.Ch(data = dataDT_ez_Anova %>% data.frame, StringResponse = "value", StringFactor = "Couple")
-
-
-
-dataDT_ez_Anova$Factor <- paste( dataDT_ez_Anova$Sex, dataDT_ez_Anova$Block)
-t.test.Comparison.Function.Ch(data = dataDT_ez_Anova %>% data.frame, StringResponse = "value", StringFactor = "Factor")
-
-dataDT_ez_Anova$Factor <- paste( dataDT_ez_Anova$Sex, dataDT_ez_Anova$Couple)
-t.test.Comparison.Function.Ch(data = dataDT_ez_Anova %>% data.frame, StringResponse = "value", StringFactor = "Factor")
-
-dataDT_ez_Anova$Factor <- paste( dataDT_ez_Anova$Sex, dataDT_ez_Anova$Block)
-t.test.Comparison.Function.Ch(data = dataDT_ez_Anova %>% data.frame, StringResponse = "value", StringFactor = "Factor")
-
-dataDT_ez_Anova$Factor <- paste( dataDT_ez_Anova$Couple, dataDT_ez_Anova$Block)
-t.test.Comparison.Function.Ch(data = dataDT_ez_Anova %>% data.frame, StringResponse = "value", StringFactor = "Factor")
-
-dataDT_ez_Anova$Factor <- paste( dataDT_ez_Anova$Sex , dataDT_ez_Anova$Couple, dataDT_ez_Anova$Block)
-t.test.Comparison.Function.Ch(data = dataDT_ez_Anova %>% data.frame, StringResponse = "value", StringFactor = "Factor")
-
-
-
-t.test.Comparison.Function.Ch(data = dataDT_ez_D %>% data.frame, StringResponse = "value", StringFactor = "Sex")
-t.test.Comparison.Function.Ch(data = dataDT_ez_D %>% data.frame, StringResponse = "value", StringFactor = "Couple")
-
-dataDT_ez_D$Factor <- paste( dataDT_ez_D$Sex, dataDT_ez_D$Couple)
-t.test.Comparison.Function.Ch(data = dataDT_ez_D %>% data.frame, StringResponse = "value", StringFactor = "Factor")
 
 
 

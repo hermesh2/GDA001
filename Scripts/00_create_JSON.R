@@ -5,7 +5,7 @@ if(! require("rjson")){
 library("rjson")
 
 list <-  list(
-  needed_script = c("dplyr", "data.table", "ez", "ggplot2", "nlme", "lme4", "languageR", "lmerTest"),
+  needed_script = c("dplyr", "data.table", "ez", "ggplot2", "nlme", "lme4", "languageR", "lmerTest", "modeest", "psych"),
   dir_script = getwd(),
   seet_seed = 11234, # 112345
   min_RT = 300,
