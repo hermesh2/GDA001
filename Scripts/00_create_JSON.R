@@ -34,7 +34,8 @@ list <-  list(
   Error_plus_Subject_600 = FALSE,
   Only_attribute = FALSE,           # Nos quedamos solo con los atributos
   Subject_out = c(102),             # Falla de hacer
-  measure = "log"                     # D, RT, log o z
+  measure = "log",                  # D, RT, log o z
+  save_plots_06 = TRUE              # Booeleano para guardar los plots
 )
 writeLines(text = toJSON(list), con = "Data/00_Initial.json")
 

@@ -100,6 +100,11 @@ t_test_func(data = dataDTcorrect , tipo_char = "FACEBOOK")
 t_test_func(data = dataDTcorrect , tipo_char = "HELP")
 t_test_func(data = dataDTcorrect , tipo_char = "SEXO")
 
+# dataDTcorrect$response_time <- dataDTcorrect$response_time %>%  log
+# t_test_func(data = dataDTcorrect , tipo_char = "FACEBOOK")
+# t_test_func(data = dataDTcorrect , tipo_char = "HELP")
+# t_test_func(data = dataDTcorrect , tipo_char = "SEXO")
+
 t_test_func(data = dataDTcorrect , tipo_char = "FACEBOOK", response_char = "correct")
 t_test_func(data = dataDTcorrect , tipo_char = "HELP", response_char = "correct")
 t_test_func(data = dataDTcorrect , tipo_char = "SEXO", response_char = "correct")
